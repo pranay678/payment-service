@@ -1,13 +1,7 @@
 pipeline {
   agent any
 
-  tools {
-    maven 'Maven 3'
-    jdk   'JDK 21'
-  }
-
   options {
-    timestamps()
     timeout(time: 15, unit: 'MINUTES')
   }
 
@@ -21,13 +15,13 @@ pipeline {
     stage('Build') {
       steps {
         // FAILS: Jackson 2.13 + Hibernate Validator 6 conflict with Spring Boot 3.3.x
-        sh 'mvn -B clean compile -pl sample-projects/payment-service -am'
+        sh 'mvn -B clean compile -f sample-projects/payment-service/pom.xml'
       }
     }
 
     stage('Test') {
       steps {
-        sh 'mvn -B test -pl sample-projects/payment-service -am'
+        sh 'mvn -B test -f sample-projects/payment-service/pom.xml'
       }
       post {
         always {
@@ -39,7 +33,7 @@ pipeline {
 
     stage('Package') {
       steps {
-        sh 'mvn -B package -DskipTests -pl sample-projects/payment-service -am'
+        sh 'mvn -B package -DskipTests -f sample-projects/payment-service/pom.xml'
       }
     }
   }
